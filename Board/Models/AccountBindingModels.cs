@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Broad.Models
+namespace Board.Models
 {
     // Модели, используемые в качестве параметров действий AccountController.
 

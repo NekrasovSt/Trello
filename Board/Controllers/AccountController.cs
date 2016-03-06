@@ -6,18 +6,17 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
+using Board.Models;
+using Board.Providers;
+using Board.Results;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using Broad.Models;
-using Broad.Providers;
-using Broad.Results;
 
-namespace Broad.Controllers
+namespace Board.Controllers
 {
     [Authorize]
     [RoutePrefix("api/Account")]

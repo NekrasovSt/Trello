@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Broad.Models
+namespace Board.Models
 {
     // Модели, возвращаемые действиями AccountController.
 

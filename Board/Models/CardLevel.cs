@@ -1,4 +1,4 @@
-﻿namespace Broad.Models
+﻿namespace Board.Models
 {
     public enum CardLevel
     {

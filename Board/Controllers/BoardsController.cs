@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Security.Claims;
 using System.Web.Http;
-using Broad.Models;
-using Broad.Repositories;
+using Board.Models;
+using Board.Repositories;
+using Microsoft.AspNet.Identity;
+using Board = Board.Models.Board;
 
-namespace Broad.Controllers
+namespace Board.Controllers
 {
     //[RoutePrefix("api/{controller}/{action}")]
     [Authorize]
     public class BoardsController : ApiController
     {
         // GET api/<controller>
-        public IEnumerable<Board> GetList(int last = -1)
+        public IEnumerable<Models.Board> GetList(bool showeAcrhive)
         {
-            var identity = User.Identity as ClaimsIdentity;
+            var id = User.Identity.GetUserId();
+
             BoardsRepository repository = new BoardsRepository();
-            return repository.List();
+            return repository.List(new Guid(id), showeAcrhive);
         }
 
         // GET api/<controller>/5
@@ -29,18 +28,54 @@ namespace Broad.Controllers
         }
 
         // POST api/<controller>
-        public void Post([FromBody]string value)
+        public IHttpActionResult Post([FromBody]NewBoard obj)
         {
+            Models.Board value = new Models.Board
+            {
+                Name = obj.Name,
+                UserId = new Guid(User.Identity.GetUserId()),
+                CreationDate = DateTime.Now
+            };
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            BoardsRepository repository = new BoardsRepository();
+            repository.Insert(value);
+
+            return Ok(value);
         }
 
         // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        public IHttpActionResult Put(int id, [FromBody]Models.Board value)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            BoardsRepository repository = new BoardsRepository();
+            repository.Update(value);
+
+            return Ok(value);
         }
 
         // DELETE api/<controller>/5
-        public void Delete(int id)
+        public IHttpActionResult Delete(int id)
         {
+            BoardsRepository repository = new BoardsRepository();
+            var obj = repository.Get(id);
+            if (obj == null)
+            {
+                ModelState.AddModelError("Id","Объект не найден");
+                return BadRequest(ModelState);
+            }
+            if (!obj.Archived)
+            {
+                ModelState.AddModelError("Archived", "Удалять можно только архивированные записи");
+                return BadRequest(ModelState);
+            }
+            repository.Delete(obj);
+            return Ok();
         }
     }
 }

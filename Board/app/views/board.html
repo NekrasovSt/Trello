@@ -16,11 +16,38 @@
         <div class="panel panel-default">
             <div class="panel-heading">Доски</div>
             <div class="panel-body">
-                <form role="form">
-                    <div class="form-group">
-                        <input type="email" class="form-control" placeholder="Найти доску по названию">
-                    </div>
-                </form>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Новая доска" ng-model="newBoardName">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="newBoard()" ng-disabled="!newBoardName">Добавить</button>
+                    </span>
+                </div>
+                <uib-accordion close-others="oneAtATime">
+                    <uib-accordion-group>
+                        <uib-accordion-heading>
+                            {{selectedBoard.Name||'Не выбранна'}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                        </uib-accordion-heading>
+                        <div>
+                            <div class="form-group">
+                                <label>Название</label>
+                                <input type="text" class="form-control" placeholder="Название" ng-model="selectedBoard.Name">
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="selectedBoard.Archived">Архивное
+                                </label>
+                            </div>
+                            <button class="btn btn-primary" ng-click="selectedBoard.update()" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button class="btn btn-danger" ng-click="selectedBoard.delete()" ng-disabled="!selectedBoard.Archived"><span class="glyphicon glyphicon-trash"></span></button>
+                        </div>
+                    </uib-accordion-group>
+                </uib-accordion>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="query.includeArchived">Включать архивное
+                    </label>
+                </div>
+                <!-- Список досок -->
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="board in boards" ng-click="selectBoard(board)">{{board.Name}}</li>
                 </ul>
@@ -29,10 +56,56 @@
     </div>
     <div class="col-md-8">
         <div class="row">
+            <!-- Добавить список -->
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Новый список
+                    </div>
+                    <div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Новый список" ng-model="newListName">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng-click="newList()" ng-disabled="!newListName||!selectedBoard">Добавить</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Список листов -->
             <div class="col-md-4" ng-repeat="list in lists">
                 <div class="panel panel-default">
                     <div class="panel-heading">{{list.Name}}</div>
+                    <uib-accordion close-others="oneAtATime">
+                        <uib-accordion-group>
+                            <uib-accordion-heading>
+                                {{selectedBoard.Name||'Не выбранна'}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                            </uib-accordion-heading>
+                            <div>
+                                <div class="form-group">
+                                    <label>Название</label>
+                                    <input type="text" class="form-control" placeholder="Название" ng-model="selectedBoard.Name">
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" ng-model="selectedBoard.Archived">Архивное
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary" ng-click="selectedBoard.update()" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
+                                <button class="btn btn-danger" ng-click="selectedBoard.delete()" ng-disabled="!selectedBoard.Archived"><span class="glyphicon glyphicon-trash"></span></button>
+                            </div>
+                        </uib-accordion-group>
+                    </uib-accordion>
                     <ul class="list-group">
+                        <!-- Новая таска -->
+                        <li class="list-group-item">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Новая задача" ng-model="newTaskName">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="" ng-disabled="">Добавить</button>
+                                </span>
+                            </div>
+                        </li>
                         <li class="list-group-item" ng-class="levelClass[card.Level]" ng-dblclick="openTask()" ng-click="selectTask(card)" ng-repeat="card in list.Cards"><span class="badge">{{card.PlaneDate|date:'yyyy-MM-dd'}}</span>{{card.Name}}</li>
                     </ul>
                 </div>
@@ -80,5 +153,32 @@
     <div class="modal-footer">
         <button class="btn btn-primary" type="button" ng-click="ok()">Oк</button>
         <button class="btn btn-warning" type="button" ng-click="cancel()">Отмена</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="boardListTemplate.html">
+    <div>
+        <div class="form-group">
+            <input type="email" class="form-control" placeholder="Найти доску по названию">
+        </div>
+        <!-- Список досок -->
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="board in boards" ng-click="selectBoard(board)">{{board.Name}}<button class="btn btn-default btn-xs" type="button"><span class="glyphicon glyphicon-edit"></span></button></li>
+        </ul>
+    </div>
+</script>
+<script type="text/ng-template" id="boardEditTemplate.html">
+    <div>
+        <div class="form-group">
+            <label>Название</label>
+            <input type="email" class="form-control" placeholder="Название" ng-model="selectedBoard.Name">
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="selectedBoard.Archived">Архивное
+            </label>
+        </div>
+        <button class="btn btn-primary" ng-click="selectedBoard.update()" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
+        <button class="btn btn-primary" ng-click="selectedBoard.delete()" ng-disabled="!selectedBoard.Archived"><span class="glyphicon glyphicon-ok"></span></button>
     </div>
 </script>

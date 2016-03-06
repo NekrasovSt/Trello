@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Board;
 using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(Broad.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
 
-namespace Broad
+namespace Board
 {
     public partial class Startup
     {

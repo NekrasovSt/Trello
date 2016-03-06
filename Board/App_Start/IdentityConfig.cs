@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Board.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
-using Broad.Models;
 
-namespace Broad
+namespace Board
 {
     // Настройка диспетчера пользователей приложения. UserManager определяется в ASP.NET Identity и используется приложением.
 

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using Broad.Models;
-using Broad.Repositories;
+﻿using System.Web.Http;
+using Board.Models;
+using Board.Repositories;
 
-namespace Broad.Controllers
+namespace Board.Controllers
 {
     public class CardsController:ApiController
     {

@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using Broad.Models;
-using Broad.Repositories;
+using Board.Models;
+using Board.Repositories;
+using Microsoft.AspNet.Identity;
 
-namespace Broad.Controllers
+namespace Board.Controllers
 {
+    [Authorize]
     public class ListsController : ApiController
     {
-        public IEnumerable<List> GetListByParent(int parentId, int last = -1)
+        public IHttpActionResult GetList(int boardId, bool showeAcrhive)
         {
             ListsRepository rep = new ListsRepository();
-
-            return rep.List();
+            var id = User.Identity.GetUserId();
+            if (!rep.CheckBelong(new Guid(id), boardId))
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok(rep.List(boardId, showeAcrhive));
         }
         // GET api/<controller>
         public IEnumerable<string> Get()
@@ -30,8 +33,12 @@ namespace Broad.Controllers
         }
 
         // POST api/<controller>
-        public void Post([FromBody]string value)
+        public IHttpActionResult Post([FromBody]List value)
         {
+            ListsRepository rep = new ListsRepository();
+            value.CreationDate = DateTime.Now;
+            rep.Insert(value);
+            return Ok(value);
         }
 
         // PUT api/<controller>/5
