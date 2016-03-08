@@ -30,8 +30,7 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
         //listsService.getLists(item.Id).then(function(value) {
         //    $scope.lists = value.data;
         //});
-    }
-    ;
+    };
     //Подсветка классов
     $scope.levelClass = {
         '0': 'list-group-item-primary',
@@ -75,8 +74,19 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
     $scope.updateBoard = function (item) {
         boardsService.update(item);
     };
+    //Удалить доску
     $scope.deleteBoard = function (item) {
-        boardsService.delete(item);
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'deleteConfirmModal.html',
+            controller: 'deleteConfirmController'
+        });
+        modalInstance.result.then(function () {
+            boardsService.delete(item).then(function() {
+                removeItem($scope.boards, item);
+                $scope.selectedBoard = null;
+            });
+        });
     };
     //Новый список
     $scope.newList = function () {

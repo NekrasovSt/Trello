@@ -10,6 +10,7 @@ app.factory('httpInterceptor', function ($q, $rootScope, $log) {
 
             // Show loader
             $rootScope.$broadcast("loader_show");
+            $rootScope.$broadcast("error_hide");
             return config || $q.when(config);
 
         },
@@ -18,6 +19,7 @@ app.factory('httpInterceptor', function ($q, $rootScope, $log) {
             if ((--numLoadings) === 0) {
                 // Hide loader
                 $rootScope.$broadcast("loader_hide");
+                $rootScope.$broadcast("error_hide");
             }
 
             return response || $q.when(response);
@@ -28,6 +30,7 @@ app.factory('httpInterceptor', function ($q, $rootScope, $log) {
             if (!(--numLoadings)) {
                 // Hide loader
                 $rootScope.$broadcast("loader_hide");
+                $rootScope.$broadcast("error_show");
             }
 
             return $q.reject(response);

@@ -29,20 +29,11 @@ namespace Board.UnitTests
         {
             Mock<IBaseRepository<Card>> rep = new Mock<IBaseRepository<Card>>();
              _check = new Mock<ICheck<Card>>();
-            //Guid right = new Guid();
-            //check.Setup(i=>i.Check())
-            //Mock<IPrincipal> principial = new Mock<IPrincipal>();
-            //Mock<IIdentity> identity = new Mock<IIdentity>();
 
             var identity = new GenericIdentity("dominik.ernst@xyz123.de");
             //Почему так http://forums.asp.net/t/2028867.aspx?UnitTest+How+to+Mock+User+Identity+GetUserId+
             identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "ee8a8b37-ce10-40f5-a26c-e6302d9a3ceb"));
             var principal = new GenericPrincipal(identity, new[] { "user" });
-
-
-            //identity.Setup(x => x.Name).Returns("test_name");
-
-            //principial.SetupGet(i => i.Identity).Returns(identity.Object);
 
             _obj = new CardsController(rep.Object, _check.Object);
             _obj.User = principal;

@@ -41,9 +41,9 @@ namespace Board.Controllers
             //};
             value.UserId = new Guid(User.Identity.GetUserId());
             
-            if (!ModelState.IsValid)
+            if (string.IsNullOrEmpty(value.Name))
             {
-                return BadRequest(ModelState);
+                return BadRequest("Название обязательно");
             }
             _repository.Insert(value);
 

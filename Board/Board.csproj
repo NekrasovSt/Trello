@@ -254,6 +254,7 @@
     <Content Include="app\controllers\associateController.js" />
     <Content Include="app\controllers\boardController.js" />
     <Content Include="app\controllers\cardDetailModalController.js" />
+    <Content Include="app\controllers\deleteConfirmController.js" />
     <Content Include="app\controllers\indexController.js" />
     <Content Include="app\controllers\loginController.js" />
     <Content Include="app\controllers\logOutController.js" />
@@ -261,6 +262,7 @@
     <Content Include="app\controllers\refreshController.js" />
     <Content Include="app\controllers\signupController.js" />
     <Content Include="app\controllers\tokensManagerController.js" />
+    <Content Include="app\directives\error.js" />
     <Content Include="app\directives\loader.js" />
     <Content Include="app\filters\archivedFilter.js" />
     <Content Include="app\filters\clientPagination.js" />
