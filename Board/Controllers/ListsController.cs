@@ -4,52 +4,72 @@ using System.Web.Http;
 using Board.Models;
 using Board.Repositories;
 using Microsoft.AspNet.Identity;
+using Board = Board.Models.Board;
 
 namespace Board.Controllers
 {
     [Authorize]
     public class ListsController : ApiController
     {
-        public IHttpActionResult GetList(int boardId, bool showeAcrhive)
+        private readonly ListsRepository _rep;
+        private readonly BelongToUser _belongToUser;
+        public ListsController(ListsRepository rep, BelongToUser belongToUser)
         {
-            ListsRepository rep = new ListsRepository();
-            var id = User.Identity.GetUserId();
-            if (!rep.CheckBelong(new Guid(id), boardId))
-            {
-                return BadRequest(ModelState);
-            }
-            return Ok(rep.List(boardId, showeAcrhive));
-        }
-        // GET api/<controller>
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
+            _rep = rep;
+            _belongToUser = belongToUser;
         }
 
-        // GET api/<controller>/5
-        public string Get(int id)
+        public IHttpActionResult GetList(int boardId, bool showeAcrhive)
         {
-            return "value";
+            var id = User.Identity.GetUserId();
+            if (!_belongToUser.Check(new Guid(id), new Models.Board(){ Id = boardId }))
+            {
+                ModelState.AddModelError("BoardId", "Объект не принадлежит пользователю");
+                return BadRequest(ModelState);
+            }
+            return Ok(_rep.List(boardId, showeAcrhive));
         }
 
         // POST api/<controller>
         public IHttpActionResult Post([FromBody]List value)
         {
-            ListsRepository rep = new ListsRepository();
-            value.CreationDate = DateTime.Now;
-            rep.Insert(value);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var id = User.Identity.GetUserId();
+            _rep.Insert(value);
             return Ok(value);
         }
 
         // PUT api/<controller>/5
-        public void Put(int id, [FromBody]List value)
+        public IHttpActionResult Put([FromBody]List value)
         {
-            ListsRepository rep = new ListsRepository();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var userId = User.Identity.GetUserId();
+            if (!_belongToUser.Check(new Guid(userId), value))
+            {
+                ModelState.AddModelError("BoardId", "Объект не принадлежит пользователю");
+                return BadRequest(ModelState);
+            }
+            _rep.Update(value);
+            return Ok();
         }
 
         // DELETE api/<controller>/5
-        public void Delete(int id)
+        public IHttpActionResult Delete(int id)
         {
+            var userId = User.Identity.GetUserId();
+            if (!_belongToUser.Check(new Guid(userId), new Models.List() { Id = id }))
+            {
+                ModelState.AddModelError("BoardId", "Объект не принадлежит пользователю");
+                return BadRequest(ModelState);
+            }
+            _rep.Delete(id);
+            return Ok();
         }
     }
 }

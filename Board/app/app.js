@@ -42,7 +42,7 @@ app.config(function ($routeProvider) {
         templateUrl: "/app/views/associate.html"
     });
 
-    $routeProvider.otherwise({ redirectTo: "/home" });
+    $routeProvider.otherwise({ redirectTo: "/board" });
 
 });
 

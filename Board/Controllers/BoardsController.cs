@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Http;
+using Board.Interfaces;
 using Board.Models;
 using Board.Repositories;
 using Microsoft.AspNet.Identity;
@@ -12,19 +13,21 @@ namespace Board.Controllers
     [Authorize]
     public class BoardsController : ApiController
     {
+        private readonly IBoardsRepository _repository;
+        private BelongToUser _belongToUser;
+
+        public BoardsController(IBoardsRepository repository, BelongToUser belongToUser)
+        {
+            _repository = repository;
+            _belongToUser = belongToUser;
+        }
+
         // GET api/<controller>
         public IEnumerable<Models.Board> GetList(bool showeAcrhive)
         {
             var id = User.Identity.GetUserId();
-
-            BoardsRepository repository = new BoardsRepository();
-            return repository.List(new Guid(id), showeAcrhive);
-        }
-
-        // GET api/<controller>/5
-        public string Get(int id)
-        {
-            return "value";
+            
+            return _repository.List(new Guid(id), showeAcrhive);
         }
 
         // POST api/<controller>
@@ -40,21 +43,25 @@ namespace Board.Controllers
             {
                 return BadRequest(ModelState);
             }
-            BoardsRepository repository = new BoardsRepository();
-            repository.Insert(value);
+            _repository.Insert(value);
 
             return Ok(value);
         }
 
         // PUT api/<controller>/5
-        public IHttpActionResult Put(int id, [FromBody]Models.Board value)
+        public IHttpActionResult Put([FromBody]Models.Board value)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            BoardsRepository repository = new BoardsRepository();
-            repository.Update(value);
+            var id = User.Identity.GetUserId();
+            if (!_belongToUser.Check(new Guid(id), value))
+            {
+                ModelState.AddModelError("UserId", "Объект не принадлежит пользователю");
+                return BadRequest(ModelState);
+            }
+            _repository.Update(value);
 
             return Ok(value);
         }
@@ -62,11 +69,16 @@ namespace Board.Controllers
         // DELETE api/<controller>/5
         public IHttpActionResult Delete(int id)
         {
-            BoardsRepository repository = new BoardsRepository();
-            var obj = repository.Get(id);
+            var obj = _repository.Get(id);
             if (obj == null)
             {
-                ModelState.AddModelError("Id","Объект не найден");
+                ModelState.AddModelError("Id", "Объект не найден");
+                return BadRequest(ModelState);
+            }
+            var userId = User.Identity.GetUserId();
+            if (!_belongToUser.Check(new Guid(userId), obj))
+            {
+                ModelState.AddModelError("UserId", "Объект не принадлежит пользователю");
                 return BadRequest(ModelState);
             }
             if (!obj.Archived)
@@ -74,7 +86,7 @@ namespace Board.Controllers
                 ModelState.AddModelError("Archived", "Удалять можно только архивированные записи");
                 return BadRequest(ModelState);
             }
-            repository.Delete(obj);
+            _repository.Delete(obj);
             return Ok();
         }
     }

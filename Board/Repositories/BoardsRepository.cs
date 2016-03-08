@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Board.Dal;
+using Board.Interfaces;
 using Board.Models;
 using Microsoft.Ajax.Utilities;
 
 namespace Board.Repositories
 {
-    public class BoardsRepository
+    public class BoardsRepository: IBoardsRepository
     {
         //public IEnumerable<Models.Board> List()
         //{
@@ -20,7 +21,14 @@ namespace Board.Repositories
         //    };
         //    return list;
         //} 
-        AppDbContext _context = new AppDbContext();
+
+        private readonly AppDbContext _context;
+        public BoardsRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
+
         public IQueryable<Models.Board> List(Guid userId, bool showeAcrhive)
         {
             IQueryable<Models.Board> obj;
@@ -32,7 +40,7 @@ namespace Board.Repositories
             {
                 obj = _context.Boards.Where(i => i.UserId == userId && i.Archived == false);
             }
-            return obj.Include("Lists");
+            return obj.Include("Lists").Include("Lists.Cards").Include("Lists.Cards.Comments");
         }
 
         public void Insert(Models.Board model)
@@ -43,13 +51,22 @@ namespace Board.Repositories
 
         public Models.Board Get(int id)
         {
-            return _context.Boards.Find(id);
+            return
+                _context.Boards.Where(i => i.Id == id)
+                    .Include("Lists")
+                    .Include("Lists.Cards")
+                    .Include("Lists.Cards.Comments")
+                    .FirstOrDefault();
         }
 
         public void Delete(Models.Board model)
         {
+            model = Get(model.Id);
+            _context.Comments.RemoveRange(model.Lists.SelectMany(i => i.Cards).SelectMany(i => i.Comments));
             _context.Cards.RemoveRange(model.Lists.SelectMany(i => i.Cards));
             _context.Lists.RemoveRange(model.Lists);
+            //_context.Lists.RemoveRange(model.Lists);
+
             _context.Boards.Remove(model);
 
             _context.SaveChanges();

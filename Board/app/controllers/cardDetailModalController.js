@@ -1,5 +1,5 @@
 ﻿'use strict';
-angular.module('app').controller('cardDetailModalController', ['$scope', '$uibModalInstance', 'item', 'listsService', function ($scope, $uibModalInstance, item, listsService) {
+angular.module('app').controller('cardDetailModalController', ['$scope', '$uibModalInstance', 'item', 'cardsService', 'commentsService', function ($scope, $uibModalInstance, item, cardsService, commentsService) {
     $scope.model = item;
     if ($scope.model && $scope.model.PlaneDate && !(Object.prototype.toString.call($scope.model.PlaneDate) === '[object Number]'))
         $scope.model.PlaneDate = Date.parse($scope.model.PlaneDate);
@@ -23,14 +23,35 @@ angular.module('app').controller('cardDetailModalController', ['$scope', '$uibMo
         $scope.planeDatePopup.opened = true;
     }
     $scope.ok = function () {
-        $scope.model.PlaneDate =new Date($scope.model.PlaneDate);
-        listsService.updateCard($scope.model).then(function () {
-           $uibModalInstance.close(); 
+        $scope.model.PlaneDate = new Date($scope.model.PlaneDate);
+        cardsService.update($scope.model).then(function () {
+            $uibModalInstance.close();
         });
-        
+
     };
+    $scope.addComment = function (name) {
+        commentsService.add({
+            Description: name,
+            CardId: $scope.model.Id
+        }).then(function (result) {
+            $scope.model.Comments.push(result.data);
+        });
+    };
+    $scope.levelOptions = [
+        { key: 0, value: 'Обычный' },
+        { key: 1, value: 'Маленький' },
+    { key: 2, value: 'Ниже среднего' },
+    { key: 3, value: 'Высокий' },
+    { key: 4, value: 'Срочно' }];
 
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
+    $scope.commentsPaging = {
+        curPage: 0,
+        pageSize: 3,
+        numberOfPages :function(count) {
+            return Math.ceil(count / this.pageSize);
+        }
+};
 }]);

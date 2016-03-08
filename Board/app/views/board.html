@@ -16,12 +16,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">Доски</div>
             <div class="panel-body">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Новая доска" ng-model="newBoardName">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" ng-click="newBoard()" ng-disabled="!newBoardName">Добавить</button>
-                    </span>
-                </div>
+               
                 <uib-accordion close-others="oneAtATime">
                     <uib-accordion-group>
                         <uib-accordion-heading>
@@ -37,8 +32,8 @@
                                     <input type="checkbox" ng-model="selectedBoard.Archived">Архивное
                                 </label>
                             </div>
-                            <button class="btn btn-primary" ng-click="selectedBoard.update()" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
-                            <button class="btn btn-danger" ng-click="selectedBoard.delete()" ng-disabled="!selectedBoard.Archived"><span class="glyphicon glyphicon-trash"></span></button>
+                            <button class="btn btn-primary" ng-click="updateBoard(selectedBoard)" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button class="btn btn-danger" ng-click="deleteBoard(selectedBoard)" ng-disabled="!selectedBoard.Archived"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </uib-accordion-group>
                 </uib-accordion>
@@ -51,68 +46,87 @@
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="board in boards" ng-click="selectBoard(board)">{{board.Name}}</li>
                 </ul>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Новая доска" ng-model="newBoardName">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="newBoard(newBoardName)" ng-disabled="!newBoardName">Добавить</button>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-8">
+
+        <div class="progress progress-striped active" loader>
+            <div class="progress-bar" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            </div>
+        </div>
+
         <div class="row">
             <!-- Добавить список -->
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Новый список
+                <!--<div class="panel panel-default">-->
+                <!--<div class="panel-heading">
+                    Новый список
+                </div>-->
+                <div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="archivedList">Включать архивное
+                        </label>
                     </div>
-                    <div>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Новый список" ng-model="newListName">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="newList()" ng-disabled="!newListName||!selectedBoard">Добавить</button>
-                            </span>
-                        </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Новый список" ng-model="newListName">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-click="newList()" ng-disabled="!newListName||!selectedBoard"><span class="glyphicon glyphicon-plus"></span></button>
+                        </span>
                     </div>
                 </div>
+                <!--</div>-->
             </div>
             <!-- Список листов -->
-            <div class="col-md-4" ng-repeat="list in lists">
-                <div class="panel panel-default">
-                    <div class="panel-heading">{{list.Name}}</div>
-                    <uib-accordion close-others="oneAtATime">
-                        <uib-accordion-group>
-                            <uib-accordion-heading>
-                                {{selectedBoard.Name||'Не выбранна'}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
-                            </uib-accordion-heading>
-                            <div>
-                                <div class="form-group">
-                                    <label>Название</label>
-                                    <input type="text" class="form-control" placeholder="Название" ng-model="selectedBoard.Name">
-                                </div>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" ng-model="selectedBoard.Archived">Архивное
-                                    </label>
-                                </div>
-                                <button class="btn btn-primary" ng-click="selectedBoard.update()" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
-                                <button class="btn btn-danger" ng-click="selectedBoard.delete()" ng-disabled="!selectedBoard.Archived"><span class="glyphicon glyphicon-trash"></span></button>
+            <div class="col-md-4" ng-repeat="list in lists|archivedFilter:archivedList">
+                <!--<div class="panel panel-default">
+                    <div class="panel-heading">{{list.Name}}</div>-->
+                <!-- Редактирование листа -->
+                <uib-accordion close-others="oneAtATime">
+                    <uib-accordion-group>
+                        <uib-accordion-heading>
+                            {{list.Name||'Не выбранна'}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                        </uib-accordion-heading>
+                        <div>
+                            <div class="form-group">
+                                <label>Название</label>
+                                <input type="text" class="form-control" placeholder="Название" ng-model="list.Name">
                             </div>
-                        </uib-accordion-group>
-                    </uib-accordion>
-                    <ul class="list-group">
-                        <!-- Новая таска -->
-                        <li class="list-group-item">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Новая задача" ng-model="newTaskName">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" ng-click="" ng-disabled="">Добавить</button>
-                                </span>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="list.Archived">Архивное
+                                </label>
                             </div>
-                        </li>
-                        <li class="list-group-item" ng-class="levelClass[card.Level]" ng-dblclick="openTask()" ng-click="selectTask(card)" ng-repeat="card in list.Cards"><span class="badge">{{card.PlaneDate|date:'yyyy-MM-dd'}}</span>{{card.Name}}</li>
-                    </ul>
-                </div>
+                            <button class="btn btn-primary" ng-click="updateList(list)" ng-disabled="!list.Name"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button class="btn btn-danger" ng-click="deleteList(list)" ng-disabled="!list.Archived"><span class="glyphicon glyphicon-trash"></span></button>
+                        </div>
+                    </uib-accordion-group>
+                </uib-accordion>
+                <ul class="list-group">
+                    <!-- Новая таска -->
+                    <li class="list-group-item">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Новая задача" ng-model="query.newTaskName">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng-click="addCard(list,query.newTaskName)" ng-disabled="!query.newTaskName"><span class="glyphicon glyphicon-plus"></span></button>
+                            </span>
+                        </div>
+                    </li>
+                    <li class="list-group-item" ng-class="levelClass[card.Level]" ng-dblclick="openTask()" ng-click="selectTask(card)" ng-repeat="card in list.Cards"><span class="badge">{{card.PlaneDate|date:'yyyy-MM-dd'}}</span>{{card.Name}}</li>
+                </ul>
+                <!--</div>-->
             </div>
         </div>
     </div>
 </div>
+<!-- Шаблон для деталей таски -->
 <script type="text/ng-template" id="cardDetailModal.html">
     <div class="modal-header">
         <h3 class="modal-title">Задача</h3>
@@ -139,15 +153,23 @@
             <div class="form-group">
                 <label for="cardName" class="col-sm-4 control-label">Приоритет</label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="model.Level">
-                        <option value="0">Обычный</option>
-                        <option value="1">Маленький</option>
-                        <option value="2">Ниже среднего</option>
-                        <option value="3">Высокий</option>
-                        <option value="4">Срочно</option>
-                    </select>
+                    <select class="form-control" ng-model="model.Level" data-ng-options="option.key as option.value for option in levelOptions"></select>
                 </div>
             </div>
+            <hr />
+            <div class="form-group">
+                <label for="" class="col-sm-4 control-label">Добавить коментарий</label>
+                <div class="col-sm-6">
+                    <textarea class="form-control" rows="3" id="cardName" placeholder="Коментарий" ng-model="model.newComment"></textarea>
+                </div>
+                <button class="btn btn-default" ng-disabled="!model.newComment" ng-click="addComment(model.newComment)"><span class="glyphicon glyphicon-ok"></span></button>
+            </div>
+            <blockquote ng-repeat="comment in model.Comments|clientPagination: commentsPaging.curPage * commentsPaging.pageSize | limitTo: commentsPaging.pageSize">{{comment.Description}}<footer>{{comment.CreationDate|date:'yyyy-MM-dd'}}</footer></blockquote>
+            <ul class="pager">
+                <li><a ng-click="commentsPaging.curPage=commentsPaging.curPage-1" ng-hide="commentsPaging.curPage == 0">Предыдущая</a></li>
+                <li><a>{{commentsPaging.curPage + 1}}/{{ commentsPaging.numberOfPages(model.Comments.length) }}</a></li>
+                <li><a ng-click="commentsPaging.curPage = commentsPaging.curPage+1" ng-hide="commentsPaging.curPage >= model.Comments.length/commentsPaging.pageSize - 1">Следующая</a></li>
+            </ul>
         </form>
     </div>
     <div class="modal-footer">

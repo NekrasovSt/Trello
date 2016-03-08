@@ -1,22 +1,29 @@
-﻿'use strict';
-app.controller('boardController', ['$scope', 'boardsService', 'listsService', '$uibModal', function($scope, boardsService, listsService, $uibModal) {
+'use strict';
+app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'cardsService', '$uibModal', function ($scope, boardsService, listsService, cardsService, $uibModal) {
     $scope.query = {
         includeArchived: false
     };
     //Получаем последние доски для юзера
     function loadboards() {
-        boardsService.getBoards($scope.query.includeArchived).then(function(value) {
+        boardsService.getBoards($scope.query.includeArchived).then(function (value) {
             $scope.boards = value;
             console.log(value);
         });
     }
-    
+
     loadboards();
     $scope.$watch('query.includeArchived', loadboards);
-    
-    
-    
-    $scope.selectBoard = function(item) {
+
+    function removeItem(array, item) {
+        for (var i in array) {
+            if (array[i] == item) {
+                array.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    $scope.selectBoard = function (item) {
         $scope.selectedBoard = item;
         //item.selected = true; 
         $scope.lists = item.Lists;
@@ -33,20 +40,20 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', '$
         '3': 'list-group-item-warning',
         '4': 'list-group-item-danger'
     }
-    $scope.selectTask = function(card) {
+    $scope.selectTask = function (card) {
         $scope.selectedTask = card;
     }
     ;
     //Посмотреть детально задачу
-    $scope.openTask = function(size) {
-        
+    $scope.openTask = function (size) {
+
         var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'cardDetailModal.html',
             controller: 'cardDetailModalController',
             size: size,
             resolve: {
-                item: function() {
+                item: function () {
                     return $scope.selectedTask;
                 }
             }
@@ -55,25 +62,54 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', '$
     ;
     $scope.placement = 'bottom';
     //Новая доска
-    $scope.newBoard = function() {
+    $scope.newBoard = function () {
         var obj = {
             Name: $scope.newBoardName
         };
-        boardsService.newBoard(obj).then(function() {
-        
+        boardsService.add(obj).then(function (result) {
+            $scope.boards.push(result.data);
+            $scope.newBoardName = null;
         });
-    }
-    ;
+    };
+    $scope.updateBoard = function (item) {
+        boardsService.update(item);
+    };
+    $scope.deleteBoard = function (item) {
+        boardsService.delete(item);
+    };
     //Новый список
-    $scope.newList = function() {
+    $scope.newList = function () {
         var obj = {
             Name: $scope.newListName,
-            BoardId: $scope.selectedBoard.Id
+            BoardId: $scope.selectedBoard.Id,
+            CreationDate: new Date()
         };
-        listsService.newList(obj).then(function(result) {
+        listsService.add(obj).then(function (result) {
             $scope.lists.push(result.data);
+            $scope.newListName = null;
         });
-    }
-    ;
+    };
+    //Редактировать список
+    $scope.updateList = function (list) {
+        listsService.update(list);
+    };
+    //Удалить список
+    $scope.deleteList = function (list) {
+        listsService.delete(list).then(function (item) {
+            removeItem($scope.selectedBoard.Lists, list);
+        });
+    };
+    //Добавить карту/таску
+    $scope.addCard = function (obj, name) {
+        cardsService.add({
+            Name: name,
+            ListId: obj.Id,
+            CreationDate: new Date(),
+            PlaneDate: new Date()
+        }).then(function (result) {
+            obj.Cards.push(result.data);
+            $scope.query.newTaskName = null;
+        });
+    };
 }
 ]);

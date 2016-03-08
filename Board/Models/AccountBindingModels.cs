@@ -13,7 +13,7 @@ namespace Board.Models
 
     public class ChangePasswordBindingModel
     {
-        [Required]
+        [Required(ErrorMessage= "Поле текущий пароль обязательное")]
         [DataType(DataType.Password)]
         [Display(Name = "Текущий пароль")]
         public string OldPassword { get; set; }
@@ -32,7 +32,7 @@ namespace Board.Models
 
     public class RegisterBindingModel
     {
-        [Required]
+        [Required(ErrorMessage = "Поле имя пользователя обязательное")] 
         [Display(Name = "Имя пользователя")]
         public string UserName { get; set; }
 
