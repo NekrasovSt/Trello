@@ -32,7 +32,8 @@ angular.module('app').controller('cardDetailModalController', ['$scope', '$uibMo
     $scope.addComment = function (name) {
         commentsService.add({
             Description: name,
-            CardId: $scope.model.Id
+            CardId: $scope.model.Id,
+            CreationDate: new Date()
         }).then(function (result) {
             $scope.model.Comments.push(result.data);
         });

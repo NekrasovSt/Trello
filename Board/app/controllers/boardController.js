@@ -64,7 +64,8 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
     //Новая доска
     $scope.newBoard = function () {
         var obj = {
-            Name: $scope.newBoardName
+            Name: $scope.newBoardName,
+            CreationDate: new Date()
         };
         boardsService.add(obj).then(function (result) {
             $scope.boards.push(result.data);

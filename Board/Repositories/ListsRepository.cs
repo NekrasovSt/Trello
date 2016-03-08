@@ -4,12 +4,13 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using Board.Dal;
+using Board.Interfaces;
 using Board.Models;
 using Newtonsoft.Json.Linq;
 
 namespace Board.Repositories
 {
-    public class ListsRepository
+    public class ListsRepository : IBaseRepository<Models.List>
     {
         readonly AppDbContext _context;
 
@@ -40,6 +41,11 @@ namespace Board.Repositories
 
         }
 
+        public void Delete(List obj)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Update(Models.List model)
         {
             //_context.Lists.Attach(model);
@@ -52,6 +58,12 @@ namespace Board.Repositories
             }
             _context.SaveChanges();
         }
+
+        public List Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Insert(Models.List model)
         {
             _context.Lists.Add(model);

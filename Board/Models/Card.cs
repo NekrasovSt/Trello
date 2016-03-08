@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Board.Interfaces;
 
 namespace Board.Models
 {
-    public class Card
+    public class Card:IBaseObject
     {
         public Card()
         {

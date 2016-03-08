@@ -78,5 +78,10 @@ namespace Board.Repositories
             entry.State = EntityState.Modified;
             _context.SaveChanges();
         }
+
+        public IQueryable<Models.Board> List(int parentId, bool showeAcrhive)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

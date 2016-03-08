@@ -1,4 +1,5 @@
 ﻿using System.Dynamic;
+using System.Linq;
 
 namespace Board.Interfaces
 {
@@ -8,5 +9,6 @@ namespace Board.Interfaces
         void Insert(T obj);
         void Delete(T obj);
         void Update(T obj);
+        IQueryable<T> List(int parentId, bool showeAcrhive);
     }
 }

@@ -17,6 +17,15 @@ namespace Board
 
             // e.g. container.RegisterType<ITestService, TestService>();
             container.RegisterType<IBoardsRepository, BoardsRepository>();
+            container.RegisterType<IBaseRepository<Models.List>, ListsRepository>();
+            container.RegisterType<IBaseRepository<Models.Card>, CardRepository>();
+            container.RegisterType<IBaseRepository<Models.Comment>, CommentsRepository>();
+            container.RegisterType<ICheck<Models.Comment>, BelongToUser>();
+            container.RegisterType<ICheck<Models.Board>, BelongToUser>();
+            container.RegisterType<ICheck<Models.List>, BelongToUser>();
+            container.RegisterType<ICheck<Models.Card>, BelongToUser>();
+
+
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
     }

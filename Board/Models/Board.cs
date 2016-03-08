@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Board.Interfaces;
 
 namespace Board.Models
 {
     /// <summary>
     /// Доска
     /// </summary>
-    public class Board
+    public class Board : IBaseObject
     {
         public Board()
         {

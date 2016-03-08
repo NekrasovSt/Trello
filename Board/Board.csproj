@@ -203,6 +203,7 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BoardsController.cs" />
     <Compile Include="Controllers\CardController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
@@ -212,8 +213,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IBaseObject.cs" />
     <Compile Include="Interfaces\IBaseRepository.cs" />
     <Compile Include="Interfaces\IBoardsRepository.cs" />
+    <Compile Include="Interfaces\ICheck.cs" />
     <Compile Include="Migrations\201603061043033_InitialCreate.cs" />
     <Compile Include="Migrations\201603061043033_InitialCreate.Designer.cs">
       <DependentUpon>201603061043033_InitialCreate.cs</DependentUpon>

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Board.Interfaces;
 
 namespace Board.Models
 {
-    public class List
+    public class List:IBaseObject
     {
         public List()
         {

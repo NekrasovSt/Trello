@@ -31,14 +31,16 @@ namespace Board.Controllers
         }
 
         // POST api/<controller>
-        public IHttpActionResult Post([FromBody]NewBoard obj)
+        public IHttpActionResult Post(Models.Board value)
         {
-            Models.Board value = new Models.Board
-            {
-                Name = obj.Name,
-                UserId = new Guid(User.Identity.GetUserId()),
-                CreationDate = DateTime.Now
-            };
+            //Models.Board value = new Models.Board
+            //{
+            //    Name = obj.Name,
+            //    UserId = new Guid(User.Identity.GetUserId()),
+            //    CreationDate = DateTime.Now
+            //};
+            value.UserId = new Guid(User.Identity.GetUserId());
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

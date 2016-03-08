@@ -1,37 +1,16 @@
 ﻿using System;
 using System.Web.Http;
+using Board.Interfaces;
 using Board.Models;
 using Board.Repositories;
 
 namespace Board.Controllers
 {
     [Authorize]
-    public class CardsController:ApiController
+    public class CardsController:BaseController<Card>
     {
-        private readonly CardRepository _rep;
-        public CardsController(CardRepository rep)
+        public CardsController(IBaseRepository<Card> repository, ICheck<Card> belongToUser) : base(repository, belongToUser)
         {
-            _rep = rep;
-        }
-
-        public IHttpActionResult Post([FromBody]Card value)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            _rep.Insert(value);
-            return Ok(value);
-        }
-        public IHttpActionResult Put([FromBody]Models.Card value)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            _rep.Update(value);
-
-            return Ok(value);
         }
     }
 }

@@ -4,31 +4,16 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Board.Interfaces;
 using Board.Models;
 using Board.Repositories;
 
 namespace Board.Controllers
 {
-    public class CommentsController : ApiController
+    public class CommentsController : BaseController<Comment>
     {
-        private readonly CommentsRepository _rep;
-
-        public CommentsController(CommentsRepository rep)
+        public CommentsController(IBaseRepository<Comment> repository, ICheck<Comment> belongToUser) : base(repository, belongToUser)
         {
-            _rep = rep;
-        }
-
-        // POST api/<controller>
-        public IHttpActionResult Post([FromBody]Comment value)
-        {
-            value.CreationDate = DateTime.Now;
-            if (string.IsNullOrEmpty(value.Description))
-            {
-                return BadRequest(ModelState);
-            }
-            
-            _rep.Insert(value);
-            return Ok(value);
         }
     }
 }
