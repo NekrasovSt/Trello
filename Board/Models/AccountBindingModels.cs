@@ -46,6 +46,10 @@ namespace Board.Models
         [Display(Name = "Подтверждение пароля")]
         [Compare("Password", ErrorMessage = "Пароль и его подтверждение не совпадают.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Адрес электронной почты")]
+        public string Email { get; set; }
     }
 
     public class RegisterExternalBindingModel

@@ -82,7 +82,7 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
             controller: 'deleteConfirmController'
         });
         modalInstance.result.then(function () {
-            boardsService.delete(item).then(function() {
+            boardsService.delete(item).then(function () {
                 removeItem($scope.boards, item);
                 $scope.selectedBoard = null;
             });
@@ -93,7 +93,8 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
         var obj = {
             Name: $scope.newListName,
             BoardId: $scope.selectedBoard.Id,
-            CreationDate: new Date()
+            CreationDate: new Date(),
+            MaxCardsCount: 10
         };
         listsService.add(obj).then(function (result) {
             $scope.lists.push(result.data);
@@ -102,6 +103,12 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
     };
     //Редактировать список
     $scope.updateList = function (list) {
+        if (list.MaxCardsCount < list.Cards.length) {
+            list.MaxCardsCountError = "Максимальное количество не может быть меньше общего количества уже созданных задач " + list.Cards.length;
+            return;
+        } else {
+            delete list.MaxCardsCountError;
+        }
         listsService.update(list);
     };
     //Удалить список

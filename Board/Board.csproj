@@ -217,17 +217,13 @@
     <Compile Include="Interfaces\IBaseRepository.cs" />
     <Compile Include="Interfaces\IBoardsRepository.cs" />
     <Compile Include="Interfaces\ICheck.cs" />
-    <Compile Include="Migrations\201603061043033_InitialCreate.cs" />
-    <Compile Include="Migrations\201603061043033_InitialCreate.Designer.cs">
-      <DependentUpon>201603061043033_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201603090422183_InitialCreate.cs" />
+    <Compile Include="Migrations\201603090422183_InitialCreate.Designer.cs">
+      <DependentUpon>201603090422183_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603071552371_Trello.cs" />
-    <Compile Include="Migrations\201603071552371_Trello.Designer.cs">
-      <DependentUpon>201603071552371_Trello.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603080812358_Trello2.cs" />
-    <Compile Include="Migrations\201603080812358_Trello2.Designer.cs">
-      <DependentUpon>201603080812358_Trello2.cs</DependentUpon>
+    <Compile Include="Migrations\201603090517238_Trello.cs" />
+    <Compile Include="Migrations\201603090517238_Trello.Designer.cs">
+      <DependentUpon>201603090517238_Trello.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -351,14 +347,11 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603061043033_InitialCreate.resx">
-      <DependentUpon>201603061043033_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603090422183_InitialCreate.resx">
+      <DependentUpon>201603090422183_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603071552371_Trello.resx">
-      <DependentUpon>201603071552371_Trello.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603080812358_Trello2.resx">
-      <DependentUpon>201603080812358_Trello2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603090517238_Trello.resx">
+      <DependentUpon>201603090517238_Trello.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

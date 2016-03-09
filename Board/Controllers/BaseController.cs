@@ -32,7 +32,7 @@ namespace Board.Controllers
         }
 
         // PUT api/<controller>/5
-        public IHttpActionResult Put([FromBody]T value)
+        public virtual IHttpActionResult Put([FromBody]T value)
         {
             if (!ModelState.IsValid)
             {
