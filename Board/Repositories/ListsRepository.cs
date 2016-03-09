@@ -61,7 +61,7 @@ namespace Board.Repositories
 
         public List Get(int id)
         {
-            throw new NotImplementedException();
+            return _context.Lists.Find(id);
         }
 
         public void Insert(Models.List model)

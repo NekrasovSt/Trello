@@ -3,11 +3,16 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
     $scope.query = {
         includeArchived: false
     };
+    var deleteConfirm = {
+        animation: true,
+        templateUrl: 'deleteConfirmModal.html',
+        controller: 'deleteConfirmController'
+    };
     //Получаем последние доски для юзера
     function loadboards() {
+        $scope.lists = null;
         boardsService.getBoards($scope.query.includeArchived).then(function (value) {
             $scope.boards = value;
-            console.log(value);
         });
     }
 
@@ -57,6 +62,11 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
                 }
             }
         });
+        modalInstance.result.then(function (result) {
+            if (result == 'delete') {
+                loadboards();
+            }
+        });
     }
     ;
     $scope.placement = 'bottom';
@@ -74,15 +84,12 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
     $scope.updateBoard = function (item) {
         boardsService.update(item);
     };
+
     //Удалить доску
     $scope.deleteBoard = function (item) {
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'deleteConfirmModal.html',
-            controller: 'deleteConfirmController'
-        });
+        var modalInstance = $uibModal.open(deleteConfirm);
         modalInstance.result.then(function () {
-            boardsService.delete(item).then(function() {
+            boardsService.delete(item).then(function () {
                 removeItem($scope.boards, item);
                 $scope.selectedBoard = null;
             });
@@ -93,7 +100,8 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
         var obj = {
             Name: $scope.newListName,
             BoardId: $scope.selectedBoard.Id,
-            CreationDate: new Date()
+            CreationDate: new Date(),
+            MaxCardsCount: 10
         };
         listsService.add(obj).then(function (result) {
             $scope.lists.push(result.data);
@@ -102,16 +110,27 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
     };
     //Редактировать список
     $scope.updateList = function (list) {
+        if (list.MaxCardsCount < list.Cards.length) {
+            list.MaxCardsCountError = "Максимальное количество не может быть меньше общего количества уже созданных задач " + list.Cards.length;
+            return;
+        } else {
+            delete list.MaxCardsCountError;
+        }
         listsService.update(list);
     };
     //Удалить список
     $scope.deleteList = function (list) {
-        listsService.delete(list).then(function (item) {
-            removeItem($scope.selectedBoard.Lists, list);
+        var modalInstance = $uibModal.open(deleteConfirm);
+        modalInstance.result.then(function () {
+            listsService.delete(list).then(function (item) {
+                removeItem($scope.selectedBoard.Lists, list);
+            });
         });
     };
     //Добавить карту/таску
     $scope.addCard = function (obj, name) {
+        if (obj.MaxCardsCount <= obj.Cards.length)
+            return;
         cardsService.add({
             Name: name,
             ListId: obj.Id,

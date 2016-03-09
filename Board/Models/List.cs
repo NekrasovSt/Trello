@@ -20,6 +20,11 @@ namespace Board.Models
         public DateTime CreationDate { get; set; }
         public bool Archived { get; set; }
         public int Id { get; set; }
-        public ICollection<Card> Cards { get; set; } 
+        public ICollection<Card> Cards { get; set; }
+        /// <summary>
+        /// Максимальное количество задач
+        /// </summary>
+        [Range(1,999)]
+        public int MaxCardsCount { get; set; }
     }
 }

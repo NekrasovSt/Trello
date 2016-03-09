@@ -13,6 +13,7 @@ using Board.Models;
 using Microsoft.AspNet.Identity;
 using Moq;
 using NUnit.Framework;
+using List = Board.Models.List;
 
 namespace Board.UnitTests
 {
@@ -24,18 +25,21 @@ namespace Board.UnitTests
     {
         private CardsController _obj;
         private Mock<ICheck<Card>> _check;
+        private Mock<IBaseRepository<List>> _repList;
+
         [SetUp]
         public void Init()
         {
             Mock<IBaseRepository<Card>> rep = new Mock<IBaseRepository<Card>>();
-             _check = new Mock<ICheck<Card>>();
+             _repList = new Mock<IBaseRepository<List>>();
+            _check = new Mock<ICheck<Card>>();
 
             var identity = new GenericIdentity("dominik.ernst@xyz123.de");
             //Почему так http://forums.asp.net/t/2028867.aspx?UnitTest+How+to+Mock+User+Identity+GetUserId+
             identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "ee8a8b37-ce10-40f5-a26c-e6302d9a3ceb"));
             var principal = new GenericPrincipal(identity, new[] { "user" });
 
-            _obj = new CardsController(rep.Object, _check.Object);
+            _obj = new CardsController(rep.Object, _check.Object, _repList.Object);
             _obj.User = principal;
 
         }
@@ -53,10 +57,36 @@ namespace Board.UnitTests
         [Test]
         public void PostOkTest()
         {
+            _repList.Setup(i => i.Get(It.IsAny<int>())).Returns(() =>
+            {
+                var obj = new List();
+                obj.MaxCardsCount = 3;
+                return obj;
+            });
             Card card = new Card();
             IHttpActionResult result = _obj.Post(card);
             var status = result as OkNegotiatedContentResult<Card>;
             Assert.IsNotNull(status);
+        }
+        [Test(Description = "Превыщение MaxCardsCount")]
+        public void PostWrongMaxCount()
+        {
+            _repList.Setup(i => i.Get(It.IsAny<int>())).Returns(() =>
+            {
+                var obj = new List();
+                obj.Cards.Add(new Card());
+                obj.MaxCardsCount = 1;
+                return obj;
+            });
+            _check.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<Card>())).Returns(true);
+            Card card = new Card();
+            IHttpActionResult result = _obj.Post(card);
+            var status = result as OkNegotiatedContentResult<Card>;
+            Assert.IsNull(status);
+            var invalid = result as InvalidModelStateResult;
+            Assert.IsNotNull(invalid);
+            Assert.AreEqual(invalid.ModelState.Values.Count, 1);
+            Assert.AreEqual(invalid.ModelState.Values.First().Errors[0].ErrorMessage, "Нельзя добавлять задачи более ограничения 1");
         }
         [Test(Description = "Не валидная модель")]
         public void PutInvalidModelTest()
@@ -83,6 +113,8 @@ namespace Board.UnitTests
             Assert.AreEqual(invalid.ModelState.Values.Count, 1);
             Assert.AreEqual(invalid.ModelState.Values.First().Errors[0].ErrorMessage, "Объект не принадлежит пользователю");
         }
+        
+
         [Test]
         public void PutOkTest()
         {

@@ -8,7 +8,7 @@ using Board.Models;
 
 namespace Board.Repositories
 {
-    public class CardRepository: IBaseRepository<Models.Card>
+    public class CardRepository : IBaseRepository<Models.Card>
     {
         private readonly AppDbContext _context;
 
@@ -30,7 +30,10 @@ namespace Board.Repositories
 
         public void Delete(Card obj)
         {
-            throw new NotImplementedException();
+            var model = _context.Cards.Include("Comments").FirstOrDefault(i => i.Id == obj.Id);
+            _context.Comments.RemoveRange(model.Comments);
+            _context.Cards.Remove(model);
+            _context.SaveChanges();
         }
 
         public void Update(Models.Card model)

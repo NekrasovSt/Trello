@@ -29,6 +29,11 @@ angular.module('app').controller('cardDetailModalController', ['$scope', '$uibMo
         });
 
     };
+    $scope.delete = function() {
+        cardsService.delete($scope.model).then(function () {
+            $uibModalInstance.close('delete');
+        });
+    };
     $scope.addComment = function (name) {
         commentsService.add({
             Description: name,

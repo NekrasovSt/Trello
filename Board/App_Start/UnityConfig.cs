@@ -1,5 +1,6 @@
 using Microsoft.Practices.Unity;
 using System.Web.Http;
+using Board.Controllers;
 using Board.Interfaces;
 using Board.Repositories;
 using Unity.WebApi;
@@ -24,6 +25,8 @@ namespace Board
             container.RegisterType<ICheck<Models.Board>, BelongToUser>();
             container.RegisterType<ICheck<Models.List>, BelongToUser>();
             container.RegisterType<ICheck<Models.Card>, BelongToUser>();
+
+            container.RegisterType<AccountController>(new InjectionConstructor());
 
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
