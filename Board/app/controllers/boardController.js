@@ -138,7 +138,7 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
             PlaneDate: new Date()
         }).then(function (result) {
             obj.Cards.push(result.data);
-            $scope.query.newTaskName = null;
+            obj.newTaskName = null;
         });
     };
 }

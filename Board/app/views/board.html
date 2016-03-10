@@ -119,9 +119,9 @@
                     <!-- Новая таска -->
                     <li class="list-group-item">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Новая задача" ng-model="query.newTaskName">
+                            <input type="text" class="form-control" placeholder="Новая задача" ng-model="list.newTaskName">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="addCard(list,query.newTaskName)" ng-disabled="!query.newTaskName || list.MaxCardsCount <= list.Cards.length"><span class="glyphicon glyphicon-plus"></span></button>
+                                <button class="btn btn-default" type="button" ng-click="addCard(list,list.newTaskName)" ng-disabled="!list.newTaskName || list.MaxCardsCount <= list.Cards.length"><span class="glyphicon glyphicon-plus"></span></button>
                             </span>
                         </div>
                     </li>
