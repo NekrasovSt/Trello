@@ -43,7 +43,13 @@ namespace Board.Repositories
 
         public void Delete(List obj)
         {
-            throw new NotImplementedException();
+            var model = Get(obj.Id);
+            _context.Comments.RemoveRange(model.Cards.SelectMany(i=>i.Comments));
+            _context.Cards.RemoveRange(model.Cards);
+
+            _context.Lists.Remove(model);
+
+            _context.SaveChanges();
         }
 
         public void Update(Models.List model)

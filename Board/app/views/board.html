@@ -29,11 +29,11 @@
                             </div>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" ng-model="selectedBoard.Archived">Архивное
+                                    <input type="checkbox" ng-model="selectedBoard.Archived" ng-click="changeSave(selectedBoard)">Архивное
                                 </label>
                             </div>
                             <button class="btn btn-primary" ng-click="updateBoard(selectedBoard)" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
-                            <button class="btn btn-danger" ng-click="deleteBoard(selectedBoard)" ng-disabled="!selectedBoard.Archived"><span class="glyphicon glyphicon-trash"></span></button>
+                            <button class="btn btn-danger" ng-click="deleteBoard(selectedBoard)" ng-disabled="!selectedBoard.Archived || selectedBoard.needSave" ><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </uib-accordion-group>
                 </uib-accordion>
@@ -106,12 +106,12 @@
                                 <span class="help-block">{{list.MaxCardsCountError}}</span>
                             </div>
                             <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" ng-model="list.Archived">Архивное
+                                <label ng-click="changeSave(list, true)">
+                                    <input type="checkbox"  ng-checked="list.Archived">Архивное
                                 </label>
                             </div>
                             <button class="btn btn-primary" ng-click="updateList(list)" ng-disabled="!list.Name"><span class="glyphicon glyphicon-ok"></span></button>
-                            <button class="btn btn-danger" ng-click="deleteList(list)" ng-disabled="!list.Archived"><span class="glyphicon glyphicon-trash"></span></button>
+                            <button class="btn btn-danger" ng-click="deleteList(list)" ng-disabled="!list.Archived || list.needSave"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </uib-accordion-group>
                 </uib-accordion>
@@ -166,7 +166,7 @@
                 <div class="col-sm-offset-4 col-sm-10">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" ng-model="model.Archived">Архивное
+                            <input type="checkbox" ng-model="model.Archived" ng-click="model.needSave=true" >Архивное
                         </label>
                     </div>
                 </div>
@@ -189,7 +189,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" type="button" ng-click="ok()">Сохранить</button>
-        <button class="btn btn-danger" type="button" ng-disabled="!model.Archived" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span></button>
+        <button class="btn btn-danger" type="button" ng-disabled="!model.Archived||model.needSave" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span></button>
         <button class="btn btn-warning" type="button" ng-click="cancel()">Отмена</button>
     </div>
 </script>

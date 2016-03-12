@@ -28,6 +28,12 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
         }
     }
 
+    //Взводит признак того что нужно сохранение
+    $scope.changeSave = function (obj, inverse) {
+        obj.needSave = true;
+        if (inverse)
+            obj.Archived = !obj.Archived;
+    }
     $scope.selectBoard = function (item) {
         $scope.selectedBoard = item;
         //item.selected = true; 
@@ -82,7 +88,9 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
         });
     };
     $scope.updateBoard = function (item) {
-        boardsService.update(item);
+        boardsService.update(item).then(function(result) {
+            item.needSave = false;
+        });
     };
 
     //Удалить доску
@@ -116,7 +124,9 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
         } else {
             delete list.MaxCardsCountError;
         }
-        listsService.update(list);
+        listsService.update(list).then(function(result) {
+            list.needSave = false;
+        });
     };
     //Удалить список
     $scope.deleteList = function (list) {

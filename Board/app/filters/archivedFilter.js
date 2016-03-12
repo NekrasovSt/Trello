@@ -4,7 +4,7 @@ app.filter('archivedFilter', function () {
         if (!input)
             return [];
         return input.filter(function(item) {
-            if (archived)
+            if (archived || item.needSave)
                 return true;
             return item.Archived == false;
         });

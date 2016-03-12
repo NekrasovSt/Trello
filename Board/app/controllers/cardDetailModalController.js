@@ -25,6 +25,7 @@ angular.module('app').controller('cardDetailModalController', ['$scope', '$uibMo
     $scope.ok = function () {
         $scope.model.PlaneDate = new Date($scope.model.PlaneDate);
         cardsService.update($scope.model).then(function () {
+            $scope.model.needSave = false;
             $uibModalInstance.close();
         });
 
