@@ -1,5 +1,6 @@
 ﻿'use strict';
 angular.module('app').controller('cardDetailModalController', ['$scope', '$uibModalInstance', 'item', 'cardsService', 'commentsService', function ($scope, $uibModalInstance, item, cardsService, commentsService) {
+    var backup = angular.copy(item);
     $scope.model = item;
     if ($scope.model && $scope.model.PlaneDate && !(Object.prototype.toString.call($scope.model.PlaneDate) === '[object Number]'))
         $scope.model.PlaneDate = Date.parse($scope.model.PlaneDate);
@@ -25,12 +26,12 @@ angular.module('app').controller('cardDetailModalController', ['$scope', '$uibMo
     $scope.ok = function () {
         $scope.model.PlaneDate = new Date($scope.model.PlaneDate);
         cardsService.update($scope.model).then(function () {
-            $scope.model.needSave = false;
+            $scope.model.form.$setPristine();
             $uibModalInstance.close();
         });
 
     };
-    $scope.delete = function() {
+    $scope.delete = function () {
         cardsService.delete($scope.model).then(function () {
             $uibModalInstance.close('delete');
         });
@@ -52,13 +53,15 @@ angular.module('app').controller('cardDetailModalController', ['$scope', '$uibMo
     { key: 4, value: 'Срочно' }];
 
     $scope.cancel = function () {
+        $scope.model.form.$rollbackViewValue();
+        angular.copy(backup, item);
         $uibModalInstance.dismiss('cancel');
     };
     $scope.commentsPaging = {
         curPage: 0,
         pageSize: 3,
-        numberOfPages :function(count) {
+        numberOfPages: function (count) {
             return Math.ceil(count / this.pageSize);
         }
-};
+    };
 }]);

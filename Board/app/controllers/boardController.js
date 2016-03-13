@@ -125,7 +125,7 @@ app.controller('boardController', ['$scope', 'boardsService', 'listsService', 'c
             delete list.MaxCardsCountError;
         }
         listsService.update(list).then(function(result) {
-            list.needSave = false;
+            list.form.$setPristine();
         });
     };
     //Удалить список

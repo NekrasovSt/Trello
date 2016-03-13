@@ -16,25 +16,23 @@
         <div class="panel panel-default">
             <div class="panel-heading">Доски</div>
             <div class="panel-body">
-
                 <uib-accordion close-others="oneAtATime">
                     <uib-accordion-group>
                         <uib-accordion-heading>
-                            {{selectedBoard.Name||'Не выбранна'}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                            {{selectedBoard.Name||'Не выбранна'}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
                         </uib-accordion-heading>
-                        <div>
-                            <div class="form-group">
-                                <label>Название</label>
-                                <input type="text" class="form-control" placeholder="Название" ng-model="selectedBoard.Name">
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" ng-model="selectedBoard.Archived" ng-click="changeSave(selectedBoard)">Архивное
-                                </label>
-                            </div>
-                            <button class="btn btn-primary" ng-click="updateBoard(selectedBoard)" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
-                            <button class="btn btn-danger" ng-click="deleteBoard(selectedBoard)" ng-disabled="!selectedBoard.Archived || selectedBoard.needSave" ><span class="glyphicon glyphicon-trash"></span></button>
+
+                        <div class="form-group">
+                            <label>Название</label>
+                            <input type="text" class="form-control" placeholder="Название" ng-model="selectedBoard.Name">
                         </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="selectedBoard.Archived" ng-click="changeSave(selectedBoard)">Архивное
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" ng-click="updateBoard(selectedBoard)" ng-disabled="!selectedBoard.Name"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button class="btn btn-danger" ng-click="deleteBoard(selectedBoard)" ng-disabled="!selectedBoard.Archived || selectedBoard.needSave"><span class="glyphicon glyphicon-trash"></span></button>
                     </uib-accordion-group>
                 </uib-accordion>
                 <div class="checkbox">
@@ -92,10 +90,12 @@
                 <!-- Редактирование листа -->
                 <uib-accordion close-others="oneAtATime">
                     <uib-accordion-group>
-                        <uib-accordion-heading>
-                            {{list.Name||'Не выбранна'}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
-                        </uib-accordion-heading>
-                        <div>
+                        <ng-form name="list.form">
+                            <uib-accordion-heading>
+                                {{list.Name||'Не выбранна'}}{{list.form.$dirty?'(изм.)':''}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                            </uib-accordion-heading>
+
+                            <span ng-hide="!listEdit.$dirty">dsfsf</span>
                             <div class="form-group">
                                 <label>Название</label>
                                 <input type="text" class="form-control" placeholder="Название" ng-model="list.Name">
@@ -106,13 +106,13 @@
                                 <span class="help-block">{{list.MaxCardsCountError}}</span>
                             </div>
                             <div class="checkbox">
-                                <label ng-click="changeSave(list, true)">
-                                    <input type="checkbox"  ng-checked="list.Archived">Архивное
+                                <label>
+                                    <input type="checkbox" ng-model="list.Archived">Архивное
                                 </label>
                             </div>
                             <button class="btn btn-primary" ng-click="updateList(list)" ng-disabled="!list.Name"><span class="glyphicon glyphicon-ok"></span></button>
-                            <button class="btn btn-danger" ng-click="deleteList(list)" ng-disabled="!list.Archived || list.needSave"><span class="glyphicon glyphicon-trash"></span></button>
-                        </div>
+                            <button class="btn btn-danger" ng-click="deleteList(list)" ng-disabled="!list.Archived || list.form.$dirty"><span class="glyphicon glyphicon-trash"></span></button>
+                        </ng-form>
                     </uib-accordion-group>
                 </uib-accordion>
                 <ul class="list-group">
@@ -125,7 +125,7 @@
                             </span>
                         </div>
                     </li>
-                    <li class="list-group-item" ng-class="levelClass[card.Level]" ng-dblclick="openTask()" ng-click="selectTask(card)" ng-repeat="card in list.Cards"><span class="badge">{{card.PlaneDate|date:'yyyy-MM-dd'}}</span>{{card.Name}}</li>
+                    <li class="list-group-item" ng-class="levelClass[card.Level]" ng-dblclick="openTask()" ng-click="selectTask(card)" ng-repeat="card in list.Cards"><span class="badge">{{card.PlaneDate|date:'yyyy-MM-dd'}}</span>{{card.Name}}{{card.form.$dirty?'(изм.)':''}}</li>
                 </ul>
                 <!--</div>-->
             </div>
@@ -135,10 +135,10 @@
 <!-- Шаблон для деталей таски -->
 <script type="text/ng-template" id="cardDetailModal.html">
     <div class="modal-header">
-        <h3 class="modal-title">Задача</h3>
+        <h3 class="modal-title">Задача{{model.form.$dirty?'(изм.)':''}}</h3>
     </div>
     <div class="modal-body">
-        <form class="form-horizontal" role="form">
+        <ng-form name="model.form" class="form-horizontal" role="form">
             <div class="form-group">
                 <label for="cardName" class="col-sm-4 control-label">Дата исполнения</label>
                 <div class="col-sm-6">
@@ -153,7 +153,7 @@
             <div class="form-group">
                 <label for="cardName" class="col-sm-4 control-label">Название</label>
                 <div class="col-sm-6">
-                    <textarea class="form-control" rows="3" id="cardName" placeholder="Название" ng-model="model.Name"></textarea>
+                    <textarea class="form-control" rows="3" id="cardName" placeholder="Название" ng-model="model.Name" required></textarea>
                 </div>
             </div>
             <div class="form-group">
@@ -166,7 +166,7 @@
                 <div class="col-sm-offset-4 col-sm-10">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" ng-model="model.Archived" ng-click="model.needSave=true" >Архивное
+                            <input type="checkbox" ng-model="model.Archived">Архивное
                         </label>
                     </div>
                 </div>
@@ -185,11 +185,11 @@
                 <li><a>{{commentsPaging.curPage + 1}}/{{ commentsPaging.numberOfPages(model.Comments.length) }}</a></li>
                 <li><a ng-click="commentsPaging.curPage = commentsPaging.curPage+1" ng-hide="commentsPaging.curPage >= model.Comments.length/commentsPaging.pageSize - 1">Следующая</a></li>
             </ul>
-        </form>
+        </ng-form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ok()">Сохранить</button>
-        <button class="btn btn-danger" type="button" ng-disabled="!model.Archived||model.needSave" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span></button>
+        <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="model.form.$invalid">Сохранить</button>
+        <button class="btn btn-danger" type="button" ng-disabled="!model.Archived||model.form.$dirty" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span></button>
         <button class="btn btn-warning" type="button" ng-click="cancel()">Отмена</button>
     </div>
 </script>
