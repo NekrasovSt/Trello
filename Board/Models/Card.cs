@@ -6,7 +6,7 @@ using Board.Interfaces;
 
 namespace Board.Models
 {
-    public class Card:IBaseObject
+    public class Card : IBaseObject, IParent
     {
         public Card()
         {
@@ -24,7 +24,7 @@ namespace Board.Models
         public bool Archived { get; set; }
         public int ListId { get; set; }
         [NotMapped]
-        public int ParentId { get { return ListId; } set { ListId = value; } }
+        public int ParentId { get { return ListId; } }
         public CardLevel Level { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }

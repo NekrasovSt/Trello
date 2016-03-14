@@ -10,26 +10,14 @@ using Board = Board.Models.Board;
 namespace Board.Controllers
 {
     [Authorize]
-    public class ListsController : BaseController<List>
+    public class ListsController : ParentController<List, Models.Board>
     {
-        private readonly ICheck<Models.Board> _checkBoard;
-        public ListsController(IBaseRepository<List> repository, ICheck<List> belongToUser, ICheck<Models.Board> checkBoard) : base(repository, belongToUser)
+        public ListsController(IBaseRepository<List> repository, ICheck<List> belongToUser, ICheck<Models.Board> belongToUserParent) : base(repository, belongToUser, belongToUserParent)
         {
-            _checkBoard = checkBoard;
         }
 
         public override IHttpActionResult Put(List value)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var userId = User.Identity.GetUserId();
-            if (!_checkBoard.Check(new Guid(userId), new Models.Board() {Id =value.BoardId}))
-            {
-                ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
-                return BadRequest(ModelState);
-            }
             var obj = _repository.Get(value.Id);
             if (obj.Cards.Count > value.MaxCardsCount)
             {
@@ -37,26 +25,13 @@ namespace Board.Controllers
                 return BadRequest(ModelState);
             }
 
-            _repository.Update(value);
-            return Ok(value);
+            return base.Put(value);
         }
-
-        public override IHttpActionResult Post(List value)
-        {
-            var userId = User.Identity.GetUserId();
-            if (!_checkBoard.Check(new Guid(userId), new Models.Board() {Id =value.BoardId}))
-            {
-                ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
-                return BadRequest(ModelState);
-            }
-            return base.Post(value);
-        }
-
 
         public IHttpActionResult GetList(int boardId, bool showeAcrhive)
         {
             var id = User.Identity.GetUserId();
-            if (!_checkBoard.Check(new Guid(id), new Models.Board() { Id = boardId }))
+            if (!_belongToUserParent.Check(new Guid(id), new Models.Board() { Id = boardId }))
             {
                 ModelState.AddModelError("BoardId", "Объект не принадлежит пользователю");
                 return BadRequest(ModelState);

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Board.Interfaces;
+using Newtonsoft.Json;
 
 namespace Board.Models
 {
-    public class List:IBaseObject
+    public class List : IBaseObject, IParent
     {
         public List()
         {
@@ -24,7 +27,12 @@ namespace Board.Models
         /// <summary>
         /// Максимальное количество задач
         /// </summary>
-        [Range(1,999)]
+        [Range(1, 999)]
         public int MaxCardsCount { get; set; }
+        [JsonIgnore]
+        [InverseProperty("Lists")]
+        public Board Parent { get; set; }
+        [NotMapped]
+        public int ParentId { get { return BoardId; } }
     }
 }
