@@ -25,7 +25,7 @@ namespace Board.Controllers
                 return BadRequest(ModelState);
             }
             var userId = User.Identity.GetUserId();
-            if (!_belongToUser.Check(new Guid(userId), value))
+            if (!_checkBoard.Check(new Guid(userId), new Models.Board() {Id =value.BoardId}))
             {
                 ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
                 return BadRequest(ModelState);
@@ -41,6 +41,16 @@ namespace Board.Controllers
             return Ok(value);
         }
 
+        public override IHttpActionResult Post(List value)
+        {
+            var userId = User.Identity.GetUserId();
+            if (!_checkBoard.Check(new Guid(userId), new Models.Board() {Id =value.BoardId}))
+            {
+                ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
+                return BadRequest(ModelState);
+            }
+            return base.Post(value);
+        }
 
 
         public IHttpActionResult GetList(int boardId, bool showeAcrhive)

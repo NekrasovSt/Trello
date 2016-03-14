@@ -19,6 +19,18 @@ namespace Board.Controllers
             _checkList = checkList;
         }
 
+        public override IHttpActionResult Put(Card value)
+        {
+            var userId = User.Identity.GetUserId();
+            if (!_checkList.Check(new Guid(userId), new List() { Id = value.ListId }))
+            {
+                ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
+                return BadRequest(ModelState);
+            }
+
+            return base.Put(value);
+        }
+
         public override IHttpActionResult Post(Card value)
         {
             if (!ModelState.IsValid)
@@ -26,7 +38,7 @@ namespace Board.Controllers
                 return BadRequest(ModelState);
             }
             var userId = User.Identity.GetUserId();
-            if (_checkList.Check(new Guid(userId), new List() { Id = value.Id }))
+            if (!_checkList.Check(new Guid(userId), new List() { Id = value.ListId }))
             {
                 ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
                 return BadRequest(ModelState);

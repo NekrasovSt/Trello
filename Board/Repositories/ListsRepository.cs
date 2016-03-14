@@ -67,7 +67,7 @@ namespace Board.Repositories
 
         public List Get(int id)
         {
-            return _context.Lists.Find(id);
+            return _context.Lists.Include("Cards").Include("Cards.Comments").FirstOrDefault(i=>i.Id == id);
         }
 
         public void Insert(Models.List model)
@@ -78,7 +78,8 @@ namespace Board.Repositories
 
         public void Delete(int id)
         {
-            var model = _context.Lists.Find(id);
+            var model = Get(id);
+            _context.Comments.RemoveRange(_context.Cards.SelectMany(i=>i.Comments));
             _context.Cards.RemoveRange(model.Cards);
             _context.Lists.Remove(model);
 

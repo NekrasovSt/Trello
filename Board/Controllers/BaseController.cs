@@ -27,6 +27,7 @@ namespace Board.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
             _repository.Insert(value);
             return Ok(value);
         }

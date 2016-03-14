@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Board.Interfaces;
 
 namespace Board.Models
@@ -22,6 +23,8 @@ namespace Board.Models
         public DateTime PlaneDate { get; set; }
         public bool Archived { get; set; }
         public int ListId { get; set; }
+        [NotMapped]
+        public int ParentId { get { return ListId; } set { ListId = value; } }
         public CardLevel Level { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }
