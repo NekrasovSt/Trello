@@ -8,50 +8,34 @@ using Microsoft.AspNet.Identity;
 namespace Board.Controllers
 {
     [Authorize]
-    public class CardsController : BaseController<Card>
+    public class CardsController : ParentController<Card, List>
     {
         private readonly IBaseRepository<List> _listRepository;
-        private readonly ICheck<List> _checkList;
 
-        public CardsController(IBaseRepository<Card> repository, ICheck<Card> belongToUser, IBaseRepository<List> listRepository, ICheck<List> checkList) : base(repository, belongToUser)
+        public CardsController(IBaseRepository<Card> repository, ICheck<Card> belongToUser, ICheck<List> belongToUserParent, IBaseRepository<List> listRepository) : base(repository, belongToUser, belongToUserParent)
         {
             _listRepository = listRepository;
-            _checkList = checkList;
         }
 
-        public override IHttpActionResult Put(Card value)
+        public override IHttpActionResult ValidatePost(Card value)
         {
-            var userId = User.Identity.GetUserId();
-            if (!_checkList.Check(new Guid(userId), new List() { Id = value.ListId }))
-            {
-                ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
-                return BadRequest(ModelState);
-            }
-
-            return base.Put(value);
-        }
-
-        public override IHttpActionResult Post(Card value)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var userId = User.Identity.GetUserId();
-            if (!_checkList.Check(new Guid(userId), new List() { Id = value.ListId }))
-            {
-                ModelState.AddModelError("ParentId", "Объект не принадлежит пользователю");
-                return BadRequest(ModelState);
-            }
+            var result = base.ValidatePost(value);
+            if (result != null)
+                return result;
             var obj = _listRepository.Get(value.ListId);
+            if (obj == null)
+            {
+                ModelState.AddModelError("ParentId",
+                    "Объет не найден");
+                return BadRequest(ModelState);
+            }
             if (obj.Cards.Count >= obj.MaxCardsCount)
             {
                 ModelState.AddModelError("MaxCardsCount",
                     "Нельзя добавлять задачи более ограничения " + obj.MaxCardsCount);
                 return BadRequest(ModelState);
             }
-            _repository.Insert(value);
-            return Ok(value);
+            return null;
         }
     }
 }

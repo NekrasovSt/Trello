@@ -41,7 +41,7 @@ namespace Board.UnitTests
             identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "ee8a8b37-ce10-40f5-a26c-e6302d9a3ceb"));
             var principal = new GenericPrincipal(identity, new[] { "user" });
 
-            _obj = new CardsController(rep.Object, _check.Object, _repList.Object, _checkList.Object);
+            _obj = new CardsController(rep.Object, _check.Object,  _checkList.Object, _repList.Object);
             _obj.User = principal;
 
         }
@@ -56,6 +56,26 @@ namespace Board.UnitTests
             var invalid = result as InvalidModelStateResult;
             Assert.IsNotNull(invalid);
         }
+        [Test(Description = "Не принадлежит пользователю")]
+        public void PostWrongUserTest()
+        {
+            Card card = new Card();
+            _checkList.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<List>())).Returns(false);
+            _repList.Setup(i => i.Get(It.IsAny<int>())).Returns(() =>
+            {
+                var obj = new List();
+                obj.Cards.Add(new Card());
+                obj.MaxCardsCount = 3;
+                return obj;
+            });
+            IHttpActionResult result = _obj.Post(card);
+            var status = result as OkNegotiatedContentResult<Card>;
+            Assert.IsNull(status);
+            var invalid = result as InvalidModelStateResult;
+            Assert.IsNotNull(invalid);
+            Assert.AreEqual(invalid.ModelState.Values.Count, 1);
+            Assert.AreEqual(invalid.ModelState.Values.First().Errors[0].ErrorMessage, "Объект не принадлежит пользователю");
+        }
         [Test]
         public void PostOkTest()
         {
@@ -65,6 +85,7 @@ namespace Board.UnitTests
                 obj.MaxCardsCount = 3;
                 return obj;
             });
+            _checkList.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<List>())).Returns(true);
             Card card = new Card();
             IHttpActionResult result = _obj.Post(card);
             var status = result as OkNegotiatedContentResult<Card>;
@@ -115,14 +136,28 @@ namespace Board.UnitTests
             Assert.AreEqual(invalid.ModelState.Values.Count, 1);
             Assert.AreEqual(invalid.ModelState.Values.First().Errors[0].ErrorMessage, "Объект не принадлежит пользователю");
         }
-        
+        [Test(Description = "Не принадлежит пользователю проверка по родителю")]
+        public void PutWrongUserModelParentTest()
+        {
+            Card card = new Card();
+            _check.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<Card>())).Returns(true);
+            _checkList.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<List>())).Returns(false);
+
+            IHttpActionResult result = _obj.Put(card);
+            var status = result as OkNegotiatedContentResult<Card>;
+            Assert.IsNull(status);
+            var invalid = result as InvalidModelStateResult;
+            Assert.IsNotNull(invalid);
+            Assert.AreEqual(invalid.ModelState.Values.Count, 1);
+            Assert.AreEqual(invalid.ModelState.Values.First().Errors[0].ErrorMessage, "Объект не принадлежит пользователю");
+        }
 
         [Test]
         public void PutOkTest()
         {
             Card card = new Card();
             _check.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<Card>())).Returns(true);
-
+            _checkList.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<List>())).Returns(true);
             IHttpActionResult result = _obj.Put(card);
             var status = result as OkNegotiatedContentResult<Card>;
             Assert.IsNotNull(status);

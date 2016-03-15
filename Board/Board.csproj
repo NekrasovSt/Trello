@@ -219,15 +219,6 @@
     <Compile Include="Interfaces\IBoardsRepository.cs" />
     <Compile Include="Interfaces\ICheck.cs" />
     <Compile Include="Interfaces\IParent.cs" />
-    <Compile Include="Migrations\201603091605525_4.cs" />
-    <Compile Include="Migrations\201603091605525_4.Designer.cs">
-      <DependentUpon>201603091605525_4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603141613007_5.cs" />
-    <Compile Include="Migrations\201603141613007_5.Designer.cs">
-      <DependentUpon>201603141613007_5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Board.cs" />
@@ -347,14 +338,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603091605525_4.resx">
-      <DependentUpon>201603091605525_4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603141613007_5.resx">
-      <DependentUpon>201603141613007_5.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

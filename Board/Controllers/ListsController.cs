@@ -16,16 +16,18 @@ namespace Board.Controllers
         {
         }
 
-        public override IHttpActionResult Put(List value)
+        public override IHttpActionResult ValidatePut(List value)
         {
+            var result = base.ValidatePut(value);
+            if (result != null)
+                return result;
             var obj = _repository.Get(value.Id);
             if (obj.Cards.Count > value.MaxCardsCount)
             {
-                ModelState.AddModelError("MaxCardsCount", "Максимальное количество не может быть меньше общего количества уже созданных задач "+ obj.Cards.Count);
+                ModelState.AddModelError("MaxCardsCount", "Максимальное количество не может быть меньше общего количества уже созданных задач " + obj.Cards.Count);
                 return BadRequest(ModelState);
             }
-
-            return base.Put(value);
+            return null;
         }
 
         public IHttpActionResult GetList(int boardId, bool showeAcrhive)

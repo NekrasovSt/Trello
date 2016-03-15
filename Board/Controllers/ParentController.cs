@@ -16,12 +16,19 @@ namespace Board.Controllers
             _belongToUserParent = belongToUserParent;
         }
 
-        public override IHttpActionResult Put(T value)
+        public virtual IHttpActionResult ValidatePut(T obj)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            return null;
+        }
+        public override IHttpActionResult Put(T value)
+        {
+            var result = ValidatePut(value);
+            if (result != null)
+                return result;
             var userId = User.Identity.GetUserId();
             if (!_belongToUserParent.Check(new Guid(userId), new TParent() { Id = value.ParentId }))
             {
@@ -36,13 +43,19 @@ namespace Board.Controllers
             _repository.Update(value);
             return Ok(value);
         }
-
-        public override IHttpActionResult Post(T value)
+        public virtual IHttpActionResult ValidatePost(T obj)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            return null;
+        }
+        public override IHttpActionResult Post(T value)
+        {
+            var result = ValidatePost(value);
+            if (result != null)
+                return result;
             var userId = User.Identity.GetUserId();
             if (!_belongToUserParent.Check(new Guid(userId), new TParent() { Id = value.ParentId }))
             {

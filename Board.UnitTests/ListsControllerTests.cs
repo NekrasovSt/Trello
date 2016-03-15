@@ -14,21 +14,21 @@ using Moq;
 using NUnit.Framework;
 using List = Board.Models.List;
 
-namespace Board.UnitTests
+namespace BoardApp.UnitTests
 {
     [TestFixture]
     public class ListsControllerTests
     {
         private ListsController _obj;
-        private Mock<ICheck<Board.Models.List>> _check;
+        private Mock<ICheck<List>> _check;
         private Mock<ICheck<Board.Models.Board>> _boardCheck;
-        private Mock<IBaseRepository<Board.Models.List>> _rep;
+        private Mock<IBaseRepository<List>> _rep;
 
         [SetUp]
         public void Init()
         {
-            _rep = new Mock<IBaseRepository<Board.Models.List>>();
-            _check = new Mock<ICheck<Board.Models.List>>();
+            _rep = new Mock<IBaseRepository<List>>();
+            _check = new Mock<ICheck<List>>();
             _boardCheck = new Mock<ICheck<Board.Models.Board>>();
 
             var identity = new GenericIdentity("dominik.ernst@xyz123.de");
@@ -72,6 +72,7 @@ namespace Board.UnitTests
             List card = new List();
             card.MaxCardsCount = 5;
             _check.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<List>())).Returns(true);
+            _boardCheck.Setup(i => i.Check(It.IsAny<Guid>(), It.IsAny<Board.Models.Board>())).Returns(true);
             _rep.Setup(i => i.Get(It.IsAny<int>())).Returns(() =>
             {
                 var obj = new List();
